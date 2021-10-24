@@ -7,25 +7,16 @@ import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-
 /**
  * @author akirakozov
  */
 public class Main {
-    public static void main(String[] args) throws Exception {
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-            String sql = "CREATE TABLE IF NOT EXISTS PRODUCT" +
-                    "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    " NAME           TEXT    NOT NULL, " +
-                    " PRICE          INT     NOT NULL)";
-            Statement stmt = c.createStatement();
+    private static final String PRODUCTION_DATABASE_URL = "jdbc:sqlite:prod.db";
 
-            stmt.executeUpdate(sql);
-            stmt.close();
-        }
+    public static void main(String[] args) throws Exception {
+        String databaseUrl = args.length >= 1 && args[0] != null ? args[0] : PRODUCTION_DATABASE_URL;
+        ProductsDao productsDao = new ProductsDao(databaseUrl);
+        productsDao.createDatabaseIfNotExist();
 
         Server server = new Server(8081);
 
@@ -33,9 +24,9 @@ public class Main {
         context.setContextPath("/");
         server.setHandler(context);
 
-        context.addServlet(new ServletHolder(new AddProductServlet()), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet()),"/get-products");
-        context.addServlet(new ServletHolder(new QueryServlet()),"/query");
+        context.addServlet(new ServletHolder(new AddProductServlet(productsDao)), "/add-product");
+        context.addServlet(new ServletHolder(new GetProductsServlet(productsDao)),"/get-products");
+        context.addServlet(new ServletHolder(new QueryServlet(productsDao)),"/query");
 
         server.start();
         server.join();

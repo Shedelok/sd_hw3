@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainTest {
+    private static final String DATABASE_URL = "jdbc:sqlite:test.db";
     private static final int PORT = 8081;
     private static final int SERVER_CONNECTION_RETRIES = 20;
     private static final int SERVER_CONNECTION_TIMEOUT_MILLIS = 200;
@@ -78,7 +79,7 @@ class MainTest {
 
     @BeforeAll
     static void startServer() throws Exception {
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+        try (Connection c = DriverManager.getConnection(DATABASE_URL)) {
             try (Statement stmt = c.createStatement()) {
                 stmt.executeUpdate("DROP TABLE IF EXISTS PRODUCT");
             }
@@ -86,7 +87,7 @@ class MainTest {
 
         serverThread = new Thread(() -> {
             try {
-                Main.main(new String[0]);
+                Main.main(new String[]{DATABASE_URL});
             } catch (InterruptedException e) {
                 // ok, finishing tests
             } catch (Exception e) {
