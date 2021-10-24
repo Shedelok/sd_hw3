@@ -24,6 +24,11 @@
             <artifactId>jetty-servlet</artifactId>
             <version>9.4.21.v20190926</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.1</version>
+        </dependency>
     </dependencies>
 
     <build>
