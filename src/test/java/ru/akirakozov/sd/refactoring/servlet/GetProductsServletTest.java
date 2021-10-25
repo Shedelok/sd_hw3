@@ -35,7 +35,7 @@ class GetProductsServletTest {
 
     @Test
     void sqlException() throws Exception {
-        doThrow(SQLException.class).when(productsDao).getAllProducts(response);
+        doThrow(SQLException.class).when(productsDao).getAllProducts();
 
         assertThrows(RuntimeException.class, () -> getProductsServlet.doGet(request, response));
 

@@ -6,51 +6,31 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @author akirakozov
  */
-public class QueryServlet extends HttpServlet {
-    private final ProductsDao productsDao;
-
+public class QueryServlet extends AbstractServlet {
     public QueryServlet(ProductsDao productsDao) {
-        this.productsDao = productsDao;
+        super(productsDao);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected String buildHtml(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         String command = request.getParameter("command");
 
         if ("max".equals(command)) {
-            try {
-                productsDao.getProductWithMaxPrice(response);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return getProductsDao().getProductWithMaxPrice();
         } else if ("min".equals(command)) {
-            try {
-                productsDao.getProductWithMinPrice(response);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return getProductsDao().getProductWithMinPrice();
         } else if ("sum".equals(command)) {
-            try {
-                productsDao.getSummaryPrice(response);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return getProductsDao().getSummaryPrice();
         } else if ("count".equals(command)) {
-            try {
-                productsDao.getProductsCount(response);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return getProductsDao().getProductsCount();
         } else {
-            response.getWriter().println("Unknown command: " + command);
+            return "Unknown command: " + command;
         }
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
 }

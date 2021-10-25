@@ -35,7 +35,7 @@ class QueryServletTest {
     @Test
     void max_sqlException() throws Exception {
         when(request.getParameter("command")).thenReturn("max");
-        doThrow(SQLException.class).when(productsDao).getProductWithMaxPrice(response);
+        doThrow(SQLException.class).when(productsDao).getProductWithMaxPrice();
 
         assertThrows(RuntimeException.class, () -> queryServlet.doGet(request, response));
 
@@ -45,7 +45,7 @@ class QueryServletTest {
     @Test
     void min_sqlException() throws Exception {
         when(request.getParameter("command")).thenReturn("min");
-        doThrow(SQLException.class).when(productsDao).getProductWithMinPrice(response);
+        doThrow(SQLException.class).when(productsDao).getProductWithMinPrice();
 
         assertThrows(RuntimeException.class, () -> queryServlet.doGet(request, response));
 
@@ -55,7 +55,7 @@ class QueryServletTest {
     @Test
     void sum_sqlException() throws Exception {
         when(request.getParameter("command")).thenReturn("sum");
-        doThrow(SQLException.class).when(productsDao).getSummaryPrice(response);
+        doThrow(SQLException.class).when(productsDao).getSummaryPrice();
 
         assertThrows(RuntimeException.class, () -> queryServlet.doGet(request, response));
 
@@ -65,7 +65,7 @@ class QueryServletTest {
     @Test
     void count_sqlException() throws Exception {
         when(request.getParameter("command")).thenReturn("count");
-        doThrow(SQLException.class).when(productsDao).getProductsCount(response);
+        doThrow(SQLException.class).when(productsDao).getProductsCount();
 
         assertThrows(RuntimeException.class, () -> queryServlet.doGet(request, response));
 

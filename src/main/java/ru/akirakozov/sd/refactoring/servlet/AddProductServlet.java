@@ -2,34 +2,25 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.ProductsDao;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @author akirakozov
  */
-public class AddProductServlet extends HttpServlet {
-    private final ProductsDao productsDao;
-
+public class AddProductServlet extends AbstractServlet {
     public AddProductServlet(ProductsDao productsDao) {
-        this.productsDao = productsDao;
+        super(productsDao);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected String buildHtml(HttpServletRequest request, HttpServletResponse response) throws SQLException {
         String name = request.getParameter("name");
         long price = Long.parseLong(request.getParameter("price"));
 
-        try {
-            productsDao.insertProduct(name, price);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        getProductsDao().insertProduct(name, price);
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("OK");
+        return "OK";
     }
 }

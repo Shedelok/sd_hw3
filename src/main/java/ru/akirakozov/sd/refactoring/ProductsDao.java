@@ -1,6 +1,5 @@
 package ru.akirakozov.sd.refactoring;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
 
@@ -34,93 +33,103 @@ public class ProductsDao {
         }
     }
 
-    public void getAllProducts(HttpServletResponse response) throws SQLException, IOException {
+    public String getAllProducts() throws SQLException {
+        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
-            response.getWriter().println("<html><body>");
 
             while (rs.next()) {
                 String name = rs.getString("name");
                 int price = rs.getInt("price");
-                response.getWriter().println(name + "\t" + price + "</br>");
+                resultBuilder.append(name).append('\t').append(price).append("</br>").append(System.lineSeparator());
             }
-            response.getWriter().println("</body></html>");
+            resultBuilder.append("</body></html>");
 
             rs.close();
             stmt.close();
         }
+
+        return resultBuilder.toString();
     }
 
-    public void getProductWithMaxPrice(HttpServletResponse response) throws SQLException, IOException {
+    public String getProductWithMaxPrice() throws SQLException, IOException {
+        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
+
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("<h1>Product with max price: </h1>");
+            resultBuilder.append("<h1>Product with max price: </h1>").append(System.lineSeparator());
 
             while (rs.next()) {
                 String name = rs.getString("name");
                 int price = rs.getInt("price");
-                response.getWriter().println(name + "\t" + price + "</br>");
+                resultBuilder.append(name).append("\t").append(price).append("</br>").append(System.lineSeparator());
             }
-            response.getWriter().println("</body></html>");
+            resultBuilder.append("</body></html>");
 
             rs.close();
             stmt.close();
         }
+
+        return resultBuilder.toString();
     }
 
-    public void getProductWithMinPrice(HttpServletResponse response) throws SQLException, IOException {
+    public String getProductWithMinPrice() throws SQLException {
+        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("<h1>Product with min price: </h1>");
+            resultBuilder.append("<h1>Product with min price: </h1>").append(System.lineSeparator());
 
             while (rs.next()) {
                 String name = rs.getString("name");
                 int price = rs.getInt("price");
-                response.getWriter().println(name + "\t" + price + "</br>");
+                resultBuilder.append(name).append("\t").append(price).append("</br>").append(System.lineSeparator());
             }
-            response.getWriter().println("</body></html>");
+            resultBuilder.append("</body></html>");
 
             rs.close();
             stmt.close();
         }
+
+        return resultBuilder.toString();
     }
 
-    public void getSummaryPrice(HttpServletResponse response) throws SQLException, IOException {
+    public String getSummaryPrice() throws SQLException {
+        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("Summary price: ");
+            resultBuilder.append("Summary price: ").append(System.lineSeparator());
 
             if (rs.next()) {
-                response.getWriter().println(rs.getInt(1));
+                resultBuilder.append(rs.getInt(1)).append(System.lineSeparator());
             }
-            response.getWriter().println("</body></html>");
+            resultBuilder.append("</body></html>");
 
             rs.close();
             stmt.close();
         }
+
+        return resultBuilder.toString();
     }
 
-    public void getProductsCount(HttpServletResponse response) throws SQLException, IOException {
+    public String getProductsCount() throws SQLException {
+        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("Number of products: ");
+            resultBuilder.append("Number of products: ").append(System.lineSeparator());
 
             if (rs.next()) {
-                response.getWriter().println(rs.getInt(1));
+                resultBuilder.append(rs.getInt(1)).append(System.lineSeparator());
             }
-            response.getWriter().println("</body></html>");
+            resultBuilder.append("</body></html>");
 
             rs.close();
             stmt.close();
         }
+        return resultBuilder.toString();
     }
 }
