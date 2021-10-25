@@ -40,13 +40,9 @@ public class QueryServlet extends AbstractServlet {
                     optionalToList(getProductsDao().getProductWithMinPrice())
             );
         } else if ("sum".equals(command)) {
-            return HtmlBuildingUtils.buildHtml("Summary price: " +
-                    System.lineSeparator() +
-                    getProductsDao().getSummaryPrice().map(p -> p + System.lineSeparator()).orElse(""));
+            return HtmlBuildingUtils.buildStats("Summary price: ", getProductsDao().getSummaryPrice());
         } else if ("count".equals(command)) {
-            return HtmlBuildingUtils.buildHtml("Number of products: " +
-                    System.lineSeparator() +
-                    getProductsDao().getProductsCount().map(c -> c + System.lineSeparator()).orElse(""));
+            return HtmlBuildingUtils.buildStats("Number of products: ", getProductsDao().getProductsCount());
         } else {
             return "Unknown command: " + command;
         }

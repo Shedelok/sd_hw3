@@ -5,6 +5,7 @@ import ru.akirakozov.sd.refactoring.entity.Product;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class HtmlBuildingUtils {
     private HtmlBuildingUtils() {
     }
@@ -13,7 +14,6 @@ public class HtmlBuildingUtils {
         return "<html><body>" + System.lineSeparator() + bodyContent + "</body></html>";
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static String buildListOfProducts(Optional<String> headerContent, List<Product> products) {
         StringBuilder bodyContentBuilder = new StringBuilder();
         headerContent.ifPresent(h ->
@@ -24,5 +24,11 @@ public class HtmlBuildingUtils {
                     .append(System.lineSeparator());
         }
         return buildHtml(bodyContentBuilder.toString());
+    }
+
+    public static String buildStats(String firstLine, Optional<Integer> value) {
+        return HtmlBuildingUtils.buildHtml(firstLine +
+                System.lineSeparator() +
+                value.map(v -> v + System.lineSeparator()).orElse(""));
     }
 }
