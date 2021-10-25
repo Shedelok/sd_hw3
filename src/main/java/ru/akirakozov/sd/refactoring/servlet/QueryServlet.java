@@ -1,33 +1,51 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.HtmlBuildingUtils;
 import ru.akirakozov.sd.refactoring.ProductsDao;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author akirakozov
  */
 public class QueryServlet extends AbstractServlet {
+    private static <T> List<T> optionalToList(Optional<T> optional) {
+        return optional
+                .map(Collections::singletonList)
+                .orElse(Collections.emptyList());
+    }
+
     public QueryServlet(ProductsDao productsDao) {
         super(productsDao);
     }
 
     @Override
-    protected String buildHtml(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    protected String buildHtml(HttpServletRequest request, HttpServletResponse response) throws SQLException {
         String command = request.getParameter("command");
 
         if ("max".equals(command)) {
-            return getProductsDao().getProductWithMaxPrice();
+            return HtmlBuildingUtils.buildListOfProducts(
+                    Optional.of("Product with max price: "),
+                    optionalToList(getProductsDao().getProductWithMaxPrice())
+            );
         } else if ("min".equals(command)) {
-            return getProductsDao().getProductWithMinPrice();
+            return HtmlBuildingUtils.buildListOfProducts(
+                    Optional.of("Product with min price: "),
+                    optionalToList(getProductsDao().getProductWithMinPrice())
+            );
         } else if ("sum".equals(command)) {
-            return getProductsDao().getSummaryPrice();
+            return HtmlBuildingUtils.buildHtml("Summary price: " +
+                    System.lineSeparator() +
+                    getProductsDao().getSummaryPrice().map(p -> p + System.lineSeparator()).orElse(""));
         } else if ("count".equals(command)) {
-            return getProductsDao().getProductsCount();
+            return HtmlBuildingUtils.buildHtml("Number of products: " +
+                    System.lineSeparator() +
+                    getProductsDao().getProductsCount().map(c -> c + System.lineSeparator()).orElse(""));
         } else {
             return "Unknown command: " + command;
         }

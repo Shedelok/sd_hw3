@@ -1,7 +1,11 @@
 package ru.akirakozov.sd.refactoring;
 
-import java.io.IOException;
+import ru.akirakozov.sd.refactoring.entity.Product;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ProductsDao {
     private final String databaseUrl;
@@ -33,103 +37,76 @@ public class ProductsDao {
         }
     }
 
-    public String getAllProducts() throws SQLException {
-        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
+    public List<Product> getAllProducts() throws SQLException {
+        List<Product> result = new ArrayList<>();
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
 
             while (rs.next()) {
-                String name = rs.getString("name");
-                int price = rs.getInt("price");
-                resultBuilder.append(name).append('\t').append(price).append("</br>").append(System.lineSeparator());
+                result.add(new Product(rs.getString("name"), rs.getInt("price")));
             }
-            resultBuilder.append("</body></html>");
 
             rs.close();
             stmt.close();
         }
 
-        return resultBuilder.toString();
+        return result;
     }
 
-    public String getProductWithMaxPrice() throws SQLException, IOException {
-        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
-
+    public Optional<Product> getProductWithMaxPrice() throws SQLException {
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
-            resultBuilder.append("<h1>Product with max price: </h1>").append(System.lineSeparator());
-
-            while (rs.next()) {
-                String name = rs.getString("name");
-                int price = rs.getInt("price");
-                resultBuilder.append(name).append("\t").append(price).append("</br>").append(System.lineSeparator());
+            try (Statement stmt = c.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1")) {
+                    if (rs.next()) {
+                        return Optional.of(new Product(rs));
+                    } else {
+                        return Optional.empty();
+                    }
+                }
             }
-            resultBuilder.append("</body></html>");
-
-            rs.close();
-            stmt.close();
         }
-
-        return resultBuilder.toString();
     }
 
-    public String getProductWithMinPrice() throws SQLException {
-        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
+    public Optional<Product> getProductWithMinPrice() throws SQLException {
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
-            resultBuilder.append("<h1>Product with min price: </h1>").append(System.lineSeparator());
-
-            while (rs.next()) {
-                String name = rs.getString("name");
-                int price = rs.getInt("price");
-                resultBuilder.append(name).append("\t").append(price).append("</br>").append(System.lineSeparator());
+            try (Statement stmt = c.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1")) {
+                    if (rs.next()) {
+                        return Optional.of(new Product(rs));
+                    } else {
+                        return Optional.empty();
+                    }
+                }
             }
-            resultBuilder.append("</body></html>");
-
-            rs.close();
-            stmt.close();
         }
-
-        return resultBuilder.toString();
     }
 
-    public String getSummaryPrice() throws SQLException {
-        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
+    public Optional<Integer> getSummaryPrice() throws SQLException {
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
-            resultBuilder.append("Summary price: ").append(System.lineSeparator());
-
-            if (rs.next()) {
-                resultBuilder.append(rs.getInt(1)).append(System.lineSeparator());
+            try (Statement stmt = c.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT")) {
+                    if (rs.next()) {
+                        return Optional.of(rs.getInt(1));
+                    } else {
+                        return Optional.empty();
+                    }
+                }
             }
-            resultBuilder.append("</body></html>");
-
-            rs.close();
-            stmt.close();
         }
-
-        return resultBuilder.toString();
     }
 
-    public String getProductsCount() throws SQLException {
-        StringBuilder resultBuilder = new StringBuilder("<html><body>").append(System.lineSeparator());
+    public Optional<Integer> getProductsCount() throws SQLException {
         try (Connection c = DriverManager.getConnection(databaseUrl)) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
-            resultBuilder.append("Number of products: ").append(System.lineSeparator());
-
-            if (rs.next()) {
-                resultBuilder.append(rs.getInt(1)).append(System.lineSeparator());
+            try (Statement stmt = c.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT")) {
+                    if (rs.next()) {
+                        return Optional.of(rs.getInt(1));
+                    } else {
+                        return Optional.empty();
+                    }
+                }
             }
-            resultBuilder.append("</body></html>");
-
-            rs.close();
-            stmt.close();
         }
-        return resultBuilder.toString();
     }
 }
