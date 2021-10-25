@@ -13,6 +13,7 @@ public class HtmlBuildingUtils {
         return "<html><body>" + System.lineSeparator() + bodyContent + "</body></html>";
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static String buildListOfProducts(Optional<String> headerContent, List<Product> products) {
         StringBuilder bodyContentBuilder = new StringBuilder();
         headerContent.ifPresent(h ->

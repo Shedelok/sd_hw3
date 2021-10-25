@@ -14,6 +14,7 @@ import java.util.Optional;
  * @author akirakozov
  */
 public class QueryServlet extends AbstractServlet {
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private static <T> List<T> optionalToList(Optional<T> optional) {
         return optional
                 .map(Collections::singletonList)
