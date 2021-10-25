@@ -45,7 +45,7 @@ class AddProductServletTest {
             }
 
             fail();
-            return "";
+            throw new RuntimeException();
         });
         doThrow(SQLException.class).when(productsDao).insertProduct(any(), anyLong());
 
